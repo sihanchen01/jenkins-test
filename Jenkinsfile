@@ -6,22 +6,22 @@ pipeline {
     VM_NAME        = 'my-vm'
   }
   stages {
-    stage('Install jq') {
-      steps {
-        sh 'apt-get update && apt-get install -y jq'
-      }
-    }
 
     stage('Azure Login & Command') {
       steps {
-        withCredentials([file(credentialsId: 'azure-jenkins-sp', variable: 'AZURE_AUTH')]) {
+       withCredentials([
+          string(credentialsId: 'azure-client-id', variable: 'AZ_CLIENT_ID'),
+          string(credentialsId: 'azure-client-secret', variable: 'AZ_CLIENT_SECRET'),
+          string(credentialsId: 'azure-tenant-id', variable: 'AZ_TENANT_ID'),
+          string(credentialsId: 'azure-subscription-id', variable: 'AZ_SUBSCRIPTION_ID')
+        ]) {
           sh '''
-            az login --service-principal \
-              --username "$(jq -r .clientId $AZURE_AUTH)" \
-              --password "$(jq -r .clientSecret $AZURE_AUTH)" \
-              --tenant   "$(jq -r .tenantId $AZURE_AUTH)"
+           az login --service-principal \
+              --username "$AZ_CLIENT_ID" \
+              --password "$AZ_CLIENT_SECRET" \
+              --tenant   "$AZ_TENANT_ID"
 
-            az account set --subscription "$(jq -r .subscriptionId $AZURE_AUTH)"
+            az account set --subscription "$AZ_SUBSCRIPTION_ID"
 
             az vm run-command invoke \
               --resource-group "$RESOURCE_GROUP" \
