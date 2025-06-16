@@ -1,9 +1,6 @@
 pipeline {
-  agent {
-    docker {
-      image 'mcr.microsoft.com/azure-cli'
-    }
-  }
+  agent any
+
   environment {
     RESOURCE_GROUP = 'my-resource-group'
     VM_NAME        = 'my-vm'
