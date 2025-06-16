@@ -1,31 +1,37 @@
 pipeline {
-  agent any
-
+  agent {
+    docker {
+      image 'mcr.microsoft.com/azure-cli'
+    }
+  }
+  environment {
+    RESOURCE_GROUP = 'my-resource-group'
+    VM_NAME        = 'my-vm'
+  }
   stages {
-    stage('Check Azure CLI') {
+    stage('Install jq') {
       steps {
-        sh 'az version'
+        sh 'apt-get update && apt-get install -y jq'
       }
     }
 
-    stage('Run Command on VM') {
+    stage('Azure Login & Command') {
       steps {
         withCredentials([file(credentialsId: 'azure-jenkins-sp', variable: 'AZURE_AUTH')]) {
-            sh '''
-
+          sh '''
             az login --service-principal \
               --username "$(jq -r .clientId $AZURE_AUTH)" \
               --password "$(jq -r .clientSecret $AZURE_AUTH)" \
               --tenant   "$(jq -r .tenantId $AZURE_AUTH)"
 
-                az account set --subscription "$(jq -r .subscriptionId $AZURE_AUTH)"
+            az account set --subscription "$(jq -r .subscriptionId $AZURE_AUTH)"
 
-              az vm run-command invoke \
-                --resource-group "my-resource-group" \
-                --name "my-vm" \
-                --command-id RunShellScript \
-                --scripts "echo Hello from Jenkins"
-            '''
+            az vm run-command invoke \
+              --resource-group "$RESOURCE_GROUP" \
+              --name "$VM_NAME" \
+              --command-id RunShellScript \
+              --scripts "echo Hello from Jenkins"
+          '''
         }
       }
     }
