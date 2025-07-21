@@ -1,0 +1,82 @@
+jenkins:
+  systemMessage: "Jenkins managed by JCasC for local testing!"
+  numExecutors: 2
+  mode: NORMAL
+  scmCheckoutRetryCount: 5
+  
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+        - id: "admin"
+          password: "admin123"
+        - id: "developer"
+          password: "dev123"
+  
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+        - "GROUP:Overall/Administer:admin"
+        - "GROUP:Overall/Read:authenticated"
+        - "GROUP:Job/Build:authenticated"
+        - "GROUP:Job/Cancel:authenticated"
+        - "GROUP:Job/Read:authenticated"
+        - "GROUP:Job/Workspace:authenticated"
+        - "GROUP:View/Read:authenticated"
+
+  remotingSecurity:
+    enabled: true
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+    adminAddress: "admin@localhost"
+  
+  globalLibraries:
+    libraries:
+      - name: "shared-library"
+        defaultVersion: "main"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://github.com/your-org/jenkins-shared-library.git"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-creds"
+              username: "your-github-user"
+              password: "your-github-token"
+              description: "GitHub credentials for repository access"
+          - string:
+              scope: GLOBAL
+              id: "api-token"
+              secret: "your-secret-api-token"
+              description: "API token for external services"
+
+jobs:
+  - script: |
+      pipelineJob('example-pipeline') {
+        definition {
+          cps {
+            script('''
+              pipeline {
+                agent any
+                stages {
+                  stage('Hello') {
+                    steps {
+                      echo 'Hello World from JCasC!'
+                    }
+                  }
+                }
+              }
+            ''')
+            sandbox()
+          }
+        }
+      }
