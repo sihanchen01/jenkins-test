@@ -1,7 +1,8 @@
 services:
   jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins-local
+    image: myjenkins:latest   # <--- your custom image name here
+    build: .
+    container_name: jenkins-server
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -10,12 +11,24 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - ./jenkins-config.yaml:/var/jenkins_home/casc_configs/jenkins.yaml:ro
+      - ${HOME}/.ssh/ZscalerRootCA.pem:/usr/local/share/ca-certificates/ZscalerRootCA.crt:ro
+      - ./plugins.txt:/usr/share/jenkins/ref/plugins.txt:ro
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - CASC_JENKINS_CONFIG=/var/jenkins_home/casc_configs/jenkins.yaml
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy:-}
+      - no_proxy=${no_proxy}
     user: root
     networks:
       - jenkins-network
+    command: >
+      bash -c "
+        cp /usr/local/share/ca-certificates/ZscalerRootCA.crt /etc/ssl/certs/ &&
+        update-ca-certificates &&
+        keytool -import -trustcacerts -keystore /opt/java/openjdk/lib/security/cacerts -storepass changeit -noprompt -alias zscalerrootca -file /usr/local/share/ca-certificates/ZscalerRootCA.crt || true &&
+        /usr/bin/tini -- /usr/local/bin/jenkins.sh
+      "
 
   # Optional: Jenkins agent for distributed builds
   jenkins-agent:

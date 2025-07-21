@@ -1,0 +1,11 @@
+antisamy-markup-formatter
+configuration-as-code
+credentials-binding
+git
+matrix-auth
+pipeline-stage-view
+plain-credentials
+ssh-slaves
+workflow-aggregator
+workflow-cps-global-lib
+job-dsl
