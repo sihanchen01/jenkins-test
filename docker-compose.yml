@@ -38,7 +38,7 @@ services:
     environment:
       - JENKINS_URL=http://jenkins:8080
       - JENKINS_AGENT_NAME=docker-agent
-      - JENKINS_SECRET=your-secret-here
+      - JENKINS_SECRET=${jenkins_agent_secret}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
