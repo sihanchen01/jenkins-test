@@ -1,6 +1,6 @@
 jenkins:
   systemMessage: "CORE ENG - Jenkins managed by JCasC for local testing!"
-  numExecutors: 2
+  numExecutors: 1
   mode: NORMAL
   scmCheckoutRetryCount: 5
   
@@ -100,10 +100,10 @@ jobs:
   # Load all job definitions from jobs-config directory
   - file: /var/jenkins_home/casc_configs/jobs-config/test.groovy
   - file: /var/jenkins_home/casc_configs/jobs-config/production.groovy
+  - file: /var/jenkins_home/casc_configs/jobs-config/seed.lqb.groovy
 
   # You can add more job files here as needed
   # - file: /var/jenkins_home/casc_configs/jobs-config/staging.groovy
 
-# Nodes will be configured manually via Jenkins UI
-# The agent secret needs to be obtained from Jenkins after startup
-
+# Nodes configuration removed - will be set up manually
+# JCasC node configuration is complex due to secret management 

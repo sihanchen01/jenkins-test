@@ -7,7 +7,9 @@ pipeline-stage-view
 plain-credentials
 ssh-slaves
 workflow-aggregator
-workflow-cps-global-lib
 job-dsl
 dark-theme
 junit
+ws-cleanup
+blueocean
+sse-gateway

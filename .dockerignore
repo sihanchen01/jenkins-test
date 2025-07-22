@@ -1,0 +1,5 @@
+jenkins_home/
+jenkins_data/
+.git/
+*.log
+*.tmp
