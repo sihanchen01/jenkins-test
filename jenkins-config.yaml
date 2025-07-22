@@ -1,5 +1,5 @@
 jenkins:
-  systemMessage: "Jenkins managed by JCasC for local testing!"
+  systemMessage: "CORE ENG - Jenkins managed by JCasC for local testing!"
   numExecutors: 2
   mode: NORMAL
   scmCheckoutRetryCount: 5
@@ -59,24 +59,22 @@ credentials:
               secret: "your-secret-api-token"
               description: "API token for external services"
 
+
+appearance:
+  themeManager:
+    disableUserThemes: true
+    theme: "darkSystem" # use 'dark' for forcing the dark theme regardless of OS settings
+
 jobs:
   - script: |
-      pipelineJob('example-pipeline') {
-        definition {
-          cps {
-            script('''
-              pipeline {
-                agent any
-                stages {
-                  stage('Hello') {
-                    steps {
-                      echo 'Hello World from JCasC!'
-                    }
-                  }
-                }
-              }
-            ''')
-            sandbox()
-          }
-        }
+      folder('pipelines') {
+        displayName('Pipeline Jobs')
+        description('Folder containing all pipeline jobs')
       }
+
+  # Load all job definitions from jobs-config directory
+  - file: /var/jenkins_home/casc_configs/jobs-config/test.groovy
+
+  # You can add more job files here as needed
+  # - file: /var/jenkins_home/casc_configs/jobs-config/production.groovy
+  # - file: /var/jenkins_home/casc_configs/jobs-config/staging.groovy

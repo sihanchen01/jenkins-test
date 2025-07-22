@@ -1,5 +1,5 @@
 services:
-  jenkins:
+  jenkins-server:
     image: myjenkins:latest   # <--- your custom image name here
     build: .
     container_name: jenkins-server
@@ -11,6 +11,8 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - ./jenkins-config.yaml:/var/jenkins_home/casc_configs/jenkins.yaml:ro
+      - ./jobs-config:/var/jenkins_home/casc_configs/jobs-config:ro
+      - ./pipelines:/var/jenkins_home/casc_configs/pipelines:ro
       - ${HOME}/.ssh/ZscalerRootCA.pem:/usr/local/share/ca-certificates/ZscalerRootCA.crt:ro
       - ./plugins.txt:/usr/share/jenkins/ref/plugins.txt:ro
     environment:
@@ -44,7 +46,7 @@ services:
     networks:
       - jenkins-network
     depends_on:
-      - jenkins
+      - jenkins-server
 
 volumes:
   jenkins_home:
