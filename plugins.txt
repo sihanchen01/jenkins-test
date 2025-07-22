@@ -10,3 +10,4 @@ workflow-aggregator
 workflow-cps-global-lib
 job-dsl
 dark-theme
+junit

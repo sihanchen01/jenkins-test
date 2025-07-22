@@ -13,25 +13,50 @@ jenkins:
           password: "admin123"
         - id: "developer"
           password: "dev123"
+        - id: "tester"
+          password: "test123"
+        - id: "deployer"
+          password: "deploy123"
   
   authorizationStrategy:
-    globalMatrix:
-      permissions:
-        - "USER:Overall/Administer:admin"
-        - "USER:Overall/Read:authenticated"
-        - "USER:Job/Build:authenticated"
-        - "USER:Job/Cancel:authenticated"
-        - "USER:Job/Read:authenticated"
-        - "USER:Job/Workspace:authenticated"
-        - "USER:View/Read:authenticated"
+    projectMatrix:
+      entries:
+        - user:
+            name: "admin"
+            permissions:
+              - "Overall/Administer"
+        - user:
+            name: "developer"
+            permissions:
+              - "Overall/Read"
+              - "Job/Build"
+              - "Job/Cancel" 
+              - "Job/Read"
+              - "Job/Workspace"
+              - "View/Read"
+        - user:
+            name: "tester"
+            permissions:
+              - "Overall/Read"
+              - "View/Read"
+        - user:
+            name: "deployer"
+            permissions:
+              - "Overall/Read"
+              - "View/Read"
 
   remotingSecurity:
     enabled: true
+    
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: true
 
 unclassified:
   location:
     url: "http://localhost:8080/"
     adminAddress: "admin@localhost"
+  
   
   globalLibraries:
     libraries:
@@ -74,7 +99,11 @@ jobs:
 
   # Load all job definitions from jobs-config directory
   - file: /var/jenkins_home/casc_configs/jobs-config/test.groovy
+  - file: /var/jenkins_home/casc_configs/jobs-config/production.groovy
 
   # You can add more job files here as needed
-  # - file: /var/jenkins_home/casc_configs/jobs-config/production.groovy
   # - file: /var/jenkins_home/casc_configs/jobs-config/staging.groovy
+
+# Nodes will be configured manually via Jenkins UI
+# The agent secret needs to be obtained from Jenkins after startup
+

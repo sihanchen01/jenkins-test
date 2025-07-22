@@ -1,6 +1,7 @@
 FROM jenkins/jenkins:lts
 
 USER root
+ENV JAVA_OPTS="-Dhudson.model.UpdateCenter.never=true"
 
 # Copy Zscaler CA cert into the image
 COPY ZscalerRootCA.pem /usr/local/share/ca-certificates/ZscalerRootCA.crt

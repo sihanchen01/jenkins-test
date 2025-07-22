@@ -17,6 +17,7 @@ services:
       - ./plugins.txt:/usr/share/jenkins/ref/plugins.txt:ro
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - JAVA_OPTS=-Duser.timezone=Asia/Singapore
       - CASC_JENKINS_CONFIG=/var/jenkins_home/casc_configs/jenkins.yaml
       - http_proxy=${http_proxy}
       - https_proxy=${https_proxy:-}
@@ -32,15 +33,15 @@ services:
         /usr/bin/tini -- /usr/local/bin/jenkins.sh
       "
 
-  # Optional: Jenkins agent for distributed builds
+  # Jenkins agent for distributed builds
   jenkins-agent:
     image: jenkins/inbound-agent:latest
     container_name: jenkins-agent
-    restart: unless-stopped
+    restart: "no"  # Disabled until secret is configured
     environment:
-      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_URL=http://jenkins-server:8080
       - JENKINS_AGENT_NAME=docker-agent
-      - JENKINS_SECRET=${jenkins_agent_secret}
+      - JENKINS_SECRET=${jenkins_agent_secret}  # Will be replaced with actual secret
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
