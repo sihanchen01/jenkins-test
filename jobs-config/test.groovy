@@ -33,7 +33,7 @@ pipelineJob('test-pipeline') {
   }
   
   triggers {
-    cron('H * * * *') // Runs every hour
+    cron('H H * * 0') // Runs once a week on Sunday
   }
   
   logRotator {
