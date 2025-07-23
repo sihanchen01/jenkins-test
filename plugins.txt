@@ -13,3 +13,4 @@ junit
 ws-cleanup
 blueocean
 sse-gateway
+docker-workflow
